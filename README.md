@@ -1,186 +1,190 @@
-# 📊 MVP - Dashboard Analítico de CRM para Equipos de Ventas
+# Dashboard Analítico de CRM para Equipos de Ventas
 
-![CRM Dashboard Banner](https://raw.githubusercontent.com/Kronus2812/Chat_Bot/main/assets/dashboard-banner.png)
+![Dashboard Preview](https://via.placeholder.com/1200x300/1a1a2e/ffffff?text=CRM+Analytics+Dashboard)
 
-## 🎯 Resumen Ejecutivo
+## Descripción
 
-Dashboard analítico client-side que transforma archivos Excel de CRM en insights visuales instantáneos. Procesamiento 100% local (privacidad garantizada), sin backend, sin configuración. Arrastra tu archivo xlsx y obtén KPIs, gráficos interactivos y análisis de pipeline en segundos.
+Dashboard analítico que procesa archivos Excel de CRM localmente en el navegador. Transforma datos crudos en visualizaciones interactivas, KPIs ejecutivos y análisis de pipeline sin necesidad de backend o configuración compleja.
 
-**Casos de uso:** Reuniones ejecutivas, análisis de desempeño individual, auditorías de calidad de datos, forecasting de ventas.
-
----
-
-## ✨ Características Principales
-
-- **🔒 Privacidad Total:** Todos los datos se procesan localmente en tu navegador
-- **⚡ Carga Instantánea:** Drag & drop de archivos Excel (.xlsx)
-- **📈 Visualizaciones Automáticas:** Gráficos de donut, barras y tendencias temporales
-- **🎯 KPIs Ejecutivos:** Oportunidades abiertas/cerradas, Win Rate, GP Total
-- **🔍 Filtros Dinámicos:** Por trimestre, owner y estado
-- **📊 Tabla Detallada:** Vista completa row-level con scroll y headers fijos
-- **🧩 Detección Inteligente:** Columnas detectadas automáticamente con regex flexible
-- **✅ Validación en Tiempo Real:** Feedback instantáneo de calidad de datos
+**Características principales:**
+- Procesamiento 100% local (privacidad garantizada)
+- Carga de archivos Excel mediante drag & drop
+- Generación automática de gráficos y métricas
+- Filtros dinámicos por trimestre y responsable
+- Detección inteligente de columnas
 
 ---
 
-## 🚀 Inicio Rápido
+## Inicio Rápido
 
-### Requisitos Mínimos del Archivo Excel
+### Requisitos del archivo Excel
 
-Tu exportación de CRM debe incluir:
-- **Owner/Responsable** (Account Manager, Propietario)
-- **Cuenta/Cliente** (Account Name, Company)
-- **Estado** (Status: Won/Lost/Open)
-- **Probabilidad** (0-100)
-- **Valores Monetarios** (TCV, GP)
-- **Fechas** (Created Date, Close Date)
+Tu exportación debe incluir estas columnas (nombres flexibles):
+- Owner/Responsable/Account Manager
+- Cuenta/Cliente/Company
+- Estado/Status (Won/Lost/Open)
+- Probabilidad (0-100)
+- TCV y GP (valores monetarios)
+- Fechas de creación y cierre
 
 ### Uso
 
-1. Abre `index.html` en cualquier navegador moderno
+1. Abre `index.html` en tu navegador
 2. Arrastra tu archivo `.xlsx` a la zona de carga
-3. Si el archivo tiene múltiples hojas, selecciona la correcta
-4. Visualiza KPIs, gráficos y tabla de datos
-5. Aplica filtros por trimestre u owner según necesites
+3. Selecciona la hoja si hay múltiples
+4. Visualiza automáticamente los datos
 
-**¡Eso es todo!** No hay instalación, configuración ni credenciales.
+No requiere instalación ni configuración.
 
 ---
 
-## 🏗️ Arquitectura Técnica
+## Arquitectura
 
-### Filosofía: Client-Side First
+### Diseño Client-Side
 
-**Ventajas:**
-- ✅ Zero costos de infraestructura
-- ✅ Privacidad de datos corporativos garantizada
-- ✅ Despliegue trivial (servidor estático o filesystem local)
-- ✅ Sin latencia de red
+La aplicación procesa todo en el navegador del usuario:
+- Sin costos de infraestructura
+- Datos sensibles nunca salen del dispositivo
+- Despliegue simple (servidor estático o local)
+- Sin latencia de red
 
-### Componentes
+### Componentes Técnicos
 
 **HTML5**
 - Estructura semántica del dashboard
-- Secciones: carga, KPIs, gráficos, tabla
+- Secciones: carga de archivos, KPIs, gráficos, tabla de datos
 
-**CSS3 (Glassmorphism)**
-- Esquema oscuro para reducir fatiga visual
-- Transparencias, blur y gradientes radiales
+**CSS3**
+- Diseño oscuro con glassmorphism
 - Responsive y accesible
+- Enfoque en legibilidad de datos
 
-**JavaScript ES6+ (Patrón Módulo Revelador)**
-- **SheetJS:** Parsing de archivos Excel
-- **Chart.js:** Generación de visualizaciones
-- **Detección automática de columnas:** Regex patterns para variaciones lingüísticas
-- **Estructuras de datos:**
-  - `workbook`: Excel parseado
-  - `rawData`: Datos originales
-  - `normalizedRows`: Datos transformados con tipos detectados
+**JavaScript ES6+**
+- SheetJS para parsing de archivos Excel
+- Chart.js para visualizaciones
+- Detección automática de columnas con expresiones regulares
+- Tres estructuras de datos: workbook original, raw data, normalized rows
 
----
+### Detección Automática de Columnas
 
-## 📋 Casos de Uso Reales
-
-### Escenario 1: Reunión Ejecutiva Express
-**María**, directora de ventas, recibe el reporte del CRM 30 min antes de su reunión. Carga el archivo, filtra por Q4, y presenta visualizaciones profesionales sin crear manualmente gráficos.
-
-### Escenario 2: Autoevaluación de Sales Rep
-**Carlos** exporta sus oportunidades, filtra por su nombre, y analiza su win rate y GP antes de su revisión trimestral con su manager.
-
-### Escenario 3: Auditoría de Calidad de Datos
-El equipo de **Ops** carga la exportación completa y usa las validaciones en vivo para identificar campos vacíos, fechas incorrectas o probabilidades fuera de rango.
+El sistema usa patrones flexibles para detectar columnas incluso con nombres personalizados. Por ejemplo, para probabilidad busca: "probability", "prob", "probabilidad", "chance".
 
 ---
 
-## 💡 Mejores Prácticas
+## Funcionalidades
 
-### Preparación de Datos
-- Exporta **todas las columnas esenciales** desde tu CRM
-- Evita filtros restrictivos (mejor filtrar en el dashboard)
-- **Estructura esperada:** Tabla plana (headers en fila 1, datos desde fila 2)
-- ❌ Evita: tablas dinámicas, celdas combinadas, subtotales intercalados
+### Panel de KPIs
+- Oportunidades abiertas (status != Won/Lost)
+- Oportunidades cerradas (Won + Lost)
+- Win rate (Won / Total cerradas)
+- GP total acumulado
 
-### Formatos Recomendados
-- **Fechas:** ISO 8601 (`YYYY-MM-DD`) para máxima compatibilidad
-- **Números:** Sin separadores de miles
-- **Probabilidad:** 0-100 (sin símbolo %)
+### Visualizaciones
+- Gráfico de donut: distribución abiertas vs cerradas
+- Gráfico de barras: top 5 owners por GP
+- Gráfico de línea: win rate por trimestre
+
+### Filtros Dinámicos
+- Por trimestre (Q1, Q2, Q3, Q4)
+- Por owner/responsable
+- Filtros reactivos que actualizan todos los componentes
+
+### Tabla Detallada
+- Vista completa de todas las oportunidades
+- Headers fijos con scroll vertical
+- Columnas: ID, cuenta, owner, etapa, status, probabilidad, TCV, GP, fechas, trimestre
+
+---
+
+## Casos de Uso
+
+### Reuniones ejecutivas
+María, directora de ventas, recibe el reporte del CRM 30 minutos antes de su reunión. Carga el archivo y tiene visualizaciones profesionales listas en segundos. Puede filtrar por trimestre y hacer análisis individuales de cada vendedor.
+
+### Análisis individual
+Carlos exporta sus oportunidades, filtra por su nombre y analiza su win rate y contribución al GP antes de su revisión con su manager.
+
+### Auditoría de datos
+El equipo de operaciones carga la exportación completa y usa las validaciones en tiempo real para identificar problemas: campos vacíos, fechas incorrectas, probabilidades fuera de rango.
+
+---
+
+## Mejores Prácticas
+
+### Preparación de datos
+- Exporta todas las columnas necesarias desde tu CRM
+- Evita filtros restrictivos en la exportación (usa los filtros del dashboard)
+- Estructura requerida: tabla plana con headers en fila 1
+- Evita: tablas dinámicas, celdas combinadas, subtotales intercalados
+
+### Formatos recomendados
+- **Fechas:** YYYY-MM-DD (ISO 8601)
+- **Números:** sin separadores de miles
+- **Probabilidad:** 0-100 sin símbolo de porcentaje
 
 ### Performance
-- Datasets grandes (>5,000 filas): Segmenta por año fiscal o región
-- Mejor UX con análisis enfocados y contextualizados
+Para archivos grandes (>5000 filas), considera segmentar por período o región para mejor rendimiento y análisis más enfocados.
 
 ### Seguridad
-- Aunque el procesamiento es local, maneja archivos sensibles con cuidado
-- Elimina archivos de descarga después de usarlos
-- Para compartir: hostea en servidor interno o GitHub Pages privado
+Aunque el procesamiento es local, maneja archivos sensibles con precaución. Elimina archivos de descarga después de usarlos. Para compartir con tu equipo, usa un servidor interno o repositorio privado.
 
 ---
 
-## 🔮 Roadmap Futuro
+## Roadmap Futuro
 
-### Alertas Inteligentes
-- Identificar oportunidades con fecha de cierre cercana y baja probabilidad
-- Detectar concentración de riesgo (1-2 deals = >50% del GP total)
+**Alertas inteligentes**
+- Detectar oportunidades de alto riesgo (cierre cercano + baja probabilidad)
+- Identificar concentración de riesgo en pocos deals
 
-### Machine Learning Client-Side (TensorFlow.js)
+**Machine Learning**
 - Predicción de probabilidad real basada en patrones históricos
-- Detección de optimismo/pesimismo en forecasts
+- Detección de forecasts optimistas/pesimistas
 
-### Integración con APIs de CRM
+**Integración con CRM**
 - Sincronización automática vía OAuth (Salesforce, HubSpot)
-- Dashboards en tiempo real
-- Writeback de actualizaciones
+- Actualización en tiempo real
+- Writeback de cambios al CRM
 
-### Colaboración (Backend Opcional)
+**Colaboración**
 - Vistas personalizadas compartidas
 - Comentarios en oportunidades
-- Alertas configurables por usuario
+- Alertas configurables
 
 ---
 
-## 🎯 Valor Diferencial
+## Valor Diferencial
 
-### Simplicidad Radical
-❌ No requiere: training, configuración, credenciales, permisos IT  
-✅ Solo requiere: archivo Excel + navegador web
+**Simplicidad**
+No requiere training, configuración, credenciales ni permisos especiales. Solo necesitas un archivo Excel y un navegador.
 
-### Transparencia Total
-- Visualización completa de datos procesados
-- Verificación manual de cálculos de KPIs
-- Comprensión visual del impacto de filtros
+**Transparencia**
+Todos los datos son visibles. Puedes verificar cálculos manualmente y entender cómo los filtros afectan los resultados.
 
-### Privacidad como Valor Core
-- Cumplimiento GDPR sin esfuerzo adicional
-- Zero exposición de datos a terceros
-- Control total sobre información corporativa
-
-> **"Herramientas poderosas no necesitan ser complejas ni costosas."**
-
-Democramos que con tecnologías web modernas y diseño centrado en el usuario, es posible democratizar el acceso a analytics sofisticado para equipos de cualquier tamaño.
+**Privacidad**
+Cumplimiento automático con GDPR. Los datos nunca salen de tu dispositivo. Control total sobre información corporativa.
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
-**Frontend:** HTML5 · CSS3 · JavaScript ES6+  
-**Librerías:** SheetJS · Chart.js · Bootstrap 5  
-**Arquitectura:** Client-Side · Zero Backend · Static Hosting
-
----
-
-## 👨‍💻 Desarrollador
-
-**Kronus2812**  
-**Stack:** Frontend · Backend · Python · JavaScript · SQL · PHP · React · CSS · HTML
-
-📂 **Repositorio:** [github.com/Kronus2812/Chat_Bot](https://github.com/Kronus2812/Chat_Bot)  
+- HTML5, CSS3, JavaScript ES6+
+- SheetJS (parsing de Excel)
+- Chart.js (visualizaciones)
+- Bootstrap 5 (UI components)
+- Arquitectura client-side sin backend
 
 ---
 
-## 📄 Licencia
+## Desarrollador
 
-MIT License - Úsalo libremente en proyectos personales o comerciales.
+**Kronus2812**
+
+Stack: Frontend, Backend, Python, JavaScript, SQL, PHP, React, CSS, HTML
+
+Repositorio: [github.com/Kronus2812/Chat_Bot](https://github.com/Kronus2812/Chat_Bot)
 
 ---
 
-⭐ **Si este proyecto te resulta útil, deja una estrella en GitHub**
+## Licencia
+
+MIT License
