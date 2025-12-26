@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MVP Chatbot Comercial — Fase 2</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="styles.css?v=2.9" rel="stylesheet">
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark glass-nav">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">MVP Chatbot Comercial</a>
+    <span class="navbar-text small text-white-50">Fase Final</span>
+  </div>
+</nav>
+
+<main class="container my-4">
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <section class="card soft-card h-100">
+        <div class="card-body">
+          <h5 class="card-title">1) Cargar Excel</h5>
+          <p class="small text-muted">Sube un <code>.xlsx</code> exportado del CRM con columnas tipo: <b>Owner</b>, <b>Account</b>, <b>TCV CHF</b>, <b>REVENUE GP CHF</b>, <b>Probability in %</b>, <b>Sales Stage</b>, <b>Status</b>, <b>Close Date</b>.</p>
+
+          <div class="upload-zone">
+            <input type="file" id="fileInput" class="form-control" accept=".xlsx">
+          </div>
+          <div class="hint small mt-2">Procesamiento local en navegador (no se envían datos a servidor).</div>
+
+          <hr>
+          <details open>
+            <summary class="fw-semibold">Requisitos del archivo Excel</summary>
+            <ul class="mt-2 small">
+              <li>Archivo <b>.xlsx</b>. Si tu libro tiene varias hojas, <b>elige una</b> tras cargarlo.</li>
+              <li>La hoja debe ser una <b>tabla plana</b> (filas = registros, columnas = campos; sin totales por fila/columna ni celdas combinadas).</li>
+              <li>Evita <b>tablas dinámicas</b> (pivots) y crosstabs. Este MVP está pensado para datos “flat”.</li>
+              <li>Primera fila = <b>encabezados</b>. Columnas sugeridas: Owner, Account, TCV CHF, REVENUE GP CHF, Probability in %, Sales Stage, Status, Close Date.</li>
+              <li>Fechas en formato reconocible (YYYY-MM-DD). Probabilidad 0–100. Números sin separadores de miles.</li>
+            </ul>
+
+            <div id="liveReq" class="live-req mt-3">
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="fw-semibold">Validaciones en vivo</span>
+                <span id="liveReqSummary" class="badge bg-secondary">Pendiente</span>
+              </div>
+              <ul class="req-checklist small mb-0">
+                <li data-key="xlsx">Formato .xlsx</li>
+                <li data-key="flat">Hoja plana (no Pivot)</li>
+                <li data-key="headers">Encabezados mínimos detectados</li>
+                <li data-key="dates">Fechas legibles (Close/Creation)</li>
+                <li data-key="prob">Probabilidad 0–100</li>
+                <li data-key="nums">Números válidos en TCV/GP</li>
+              </ul>
+            </div>
+          </details>
+
+          <div id="sheetPicker" class="mt-2 d-none">
+            <label for="sheetSelect" class="small text-muted mb-1">Hoja a procesar</label>
+            <select id="sheetSelect" class="form-select form-select-sm"></select>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="col-lg-8">
+      <section class="card soft-card">
+        <div class="card-body">
+          <h5 class="card-title">2) Resumen Ejecutivo</h5>
+
+          <div class="row g-3" id="kpiRow">
+            <div class="col-6 col-md-3">
+              <div class="kpi">
+                <div class="kpi-label">Oportunidades abiertas</div>
+                <div class="kpi-num" data-kpi="openCount">—</div>
+                <div class="kpi-sub">Status = Open</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="kpi">
+                <div class="kpi-label">Oportunidades cerradas</div>
+                <div class="kpi-num" data-kpi="closedCount">—</div>
+                <div class="kpi-sub">Won + Lost</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="kpi">
+                <div class="kpi-label">Win rate</div>
+                <div class="kpi-num" data-kpi="winRate">—</div>
+                <div class="kpi-sub">Won / (Won + Lost)</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="kpi">
+                <div class="kpi-label">GP total (CHF)</div>
+                <div class="kpi-num" data-kpi="gpTotal">—</div>
+                <div class="kpi-sub">Suma REVENUE GP CHF</div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-3">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="chart-box">
+                <div class="chart-placeholder">Gráfico Open vs Closed</div>
+                <canvas id="chartOpenClosed" aria-label="Open vs Closed" role="img"></canvas>
+              </div>
+              <div class="chart-caption">Distribución <b>Abiertas vs Cerradas</b></div>
+            </div>
+            <div class="col-md-4">
+              <div class="chart-box">
+                <div class="chart-placeholder">Top Owners por GP</div>
+                <canvas id="chartTopOwners" aria-label="Top Owners GP" role="img"></canvas>
+              </div>
+              <div class="chart-caption">Top <b>Owners</b> por <b>GP</b></div>
+            </div>
+            <div class="col-md-4">
+              <div class="chart-box">
+                <div class="chart-placeholder">Win Rate por Trimestre</div>
+                <canvas id="chartWinRate" aria-label="Win Rate Quarterly" role="img"></canvas>
+              </div>
+              <div class="chart-caption"><b>Win Rate</b> por trimestre</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-1">
+    <div class="col-lg-6">
+      <section class="card soft-card h-100">
+        <div class="card-body">
+          <h5 class="card-title">3) Alertas y Hallazgos</h5>
+          <ul id="insights" class="bullet-list small">
+            <li class="placeholder">Fase 2 aparecera alertas como: <em>cierre cercano con prob. baja</em>, <em>campos faltantes</em>, <em>concentración por Owner</em>, <em>outliers en TCV/GP</em>, etc.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <div class="col-lg-6">
+      <section class="card soft-card h-100">
+        <div class="card-body">
+          <h5 class="card-title">4) Chat de Consultas</h5>
+          <div id="chatWindow" class="chat-window">
+            <div class="chat-msg bot">Bot: Carga un Excel para habilitar las tarjetas de consulta.</div>
+          </div>
+          <div class="input-group mt-2">
+            <input id="chatInput" type="text" class="form-control" placeholder="Escribe tu pregunta..." disabled>
+            <button id="chatSend" class="btn btn-primary" disabled>Enviar</button>
+          </div>
+          <p class="small text-muted mt-2">Procesamiento local</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-1">
+    <div class="col-12">
+      <section class="card soft-card">
+        <div class="card-body">
+          <h5 class="card-title">5) Tabla de oportunidades</h5>
+
+          <div class="toolbar d-flex flex-wrap align-items-center justify-content-between mb-2">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <div class="filter-chip">
+                <label for="filterQuarter" class="small mb-0 me-1">Trimestre</label>
+                <select id="filterQuarter" class="form-select form-select-sm" disabled>
+                  <option value="all">Todos</option>
+                  <option value="Q1">Q1</option>
+                  <option value="Q2">Q2</option>
+                  <option value="Q3">Q3</option>
+                  <option value="Q4">Q4</option>
+                </select>
+              </div>
+              <div class="filter-chip">
+                <label for="filterOwner" class="small mb-0 me-1">Owner</label>
+                <select id="filterOwner" class="form-select form-select-sm" disabled>
+                  <option value="all">Todos</option>
+                </select>
+              </div>
+              <button id="btnResetFilters" type="button" class="btn btn-sm btn-outline-light" disabled>Limpiar filtros</button>
+            </div>
+
+            <div class="d-flex gap-2 mt-2 mt-sm-0">
+              <button id="btnExportXLSX" type="button" class="btn btn-primary btn-sm" disabled>Exportar XLSX</button>
+              <button id="btnExportCSV" type="button" class="btn btn-outline-light btn-sm" disabled>CSV</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table id="dataTable" class="table table-sm table-striped align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Opportunity</th><th>Account</th><th>Owner</th><th>Sales Stage</th>
+                  <th>Status</th><th>Probability %</th><th>TCV CHF</th><th>REVENUE GP CHF</th>
+                  <th>Creation Date</th><th>Close Date</th><th>Quarter</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="placeholder-row"><td colspan="11">Tabla en Fase Final.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="text-center py-4 text-muted small">
+  MVP académico — Procesamiento local (Fase Final). ©Tomas Martinez - Proyecto SoftwareOne
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="app.js?v=3.6"></script>
+</body>
+</html>
