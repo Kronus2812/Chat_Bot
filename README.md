@@ -183,7 +183,3 @@ Stack: Frontend, Backend, Python, JavaScript, SQL, PHP, React, CSS, HTML
 Repositorio: [github.com/Kronus2812/Chat_Bot](https://github.com/Kronus2812/Chat_Bot)
 
 ---
-
-## Licencia
-
-MIT License
