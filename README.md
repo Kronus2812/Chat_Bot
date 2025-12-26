@@ -1,6 +1,5 @@
 # Dashboard Analítico de CRM para Equipos de Ventas
 
-![Dashboard Preview](https://via.placeholder.com/1200x300/1a1a2e/ffffff?text=CRM+Analytics+Dashboard)
 
 ## Descripción
 
