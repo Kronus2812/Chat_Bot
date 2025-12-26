@@ -87,6 +87,6 @@ Este dashboard es una demostración de que herramientas poderosas y útiles no n
 **Stack Tecnológico Completo:** HTML5 | CSS3 | JavaScript ES6+ | SheetJS | Chart.js | Bootstrap 5
 
 **Desarrollado por:** Kronus2812  
-**Stack del desarrollador:** Python | JavaScript | React | Django | FastAPI | MongoDB | SQL | Docker | Linux
+**Stack del desarrollador:**  Frontend | Backend | Python | JavaScript | SQL | PHP | React | CSS | HTML 
 
 **Repositorio:** [github.com/Kronus2812/MVP](https://github.com/Kronus2812/MVP)
